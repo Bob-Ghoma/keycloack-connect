@@ -1,31 +1,32 @@
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 
-public class Handler implements HttpHandler {
+public class HandlerGitLab implements HttpHandler {
 
-    private Auth auth;
+    private AuthGitLab authGitLab;
 
-    public Handler(Auth auth){
-        this.auth = auth;
+    public HandlerGitLab(AuthGitLab authGitLab) {
+        this.authGitLab = authGitLab;
     }
 
     @Override
     public void handle(HttpExchange exchange) throws IOException {
-        System.out.println("User connected !!");
+        System.out.println("Utilisateur en ligne");
         OutputStream response = exchange.getResponseBody();
-        String message = " <script>window.close();</script> ";
-        exchange.sendResponseHeaders(200,message.length());
+        String message = " En ligne ";
+        exchange. sendResponseHeaders(200, message.length());
         response.write(message.getBytes(StandardCharsets.UTF_8));
         response.flush();
 
         HashMap<String, String> params = parseQueryParams(exchange.getRequestURI().toString());
         System.out.println(params);
         if (params.containsKey("code")){
-            auth.sendAuthCode(params.get("code"));
+            authGitLab.sendAuthCode(params.get("code"));
         }
     }
 
@@ -43,6 +44,5 @@ public class Handler implements HttpHandler {
         }
         return queryParams;
     }
-
 
 }
